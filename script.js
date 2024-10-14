@@ -1,154 +1,165 @@
-document.getElementById('searchButton').addEventListener('click', fetchUniversities);
-document.getElementById('filterInput').addEventListener('input', filterUniversities);
-
-let universities = [];
-let filteredUniversities = [];
-let currentPage = 1;
-const itemsPerPage = 7;
-
-
-async function getcountri(){
-    try{
-        const country = await fetch('https://restcountries.com/v3.1/all')
-        .then(response => response.json())
-        .then(data => {
-            data.map(country => {
-                const countryName = country.name.common;
-                country[countryName] = country.cca2;
-                console.log(data)
-            });
-            populateCountrySelect();
-           
-        })
-     
-         
-     
-    } catch (error) {
-        console.error('Error fetching countries:', error);
+document.addEventListener('DOMContentLoaded', () => {
+    fetchCountries();
+  });
+  
+  let universitiesData = [];
+  let filteredUniversities = [];
+  let currentPage = 1;
+  const universitiesPerPage = 10;
+  
+  document.getElementById('SearchBtn').addEventListener('click', async () => {
+    const country = document.getElementById('countryDropdown').value;
+    if (country === '') {
+      alert('Please select a country from the dropdown.');
+      return;
     }
-}
-getcountri();
-
-// const displayOption = async () => {
-//     const options = await ();
-//     for (option of Object.keys(options)) {
-//     const newOption = document.createElement("option");
-//     console.log(option);
-//     newOption.value = option;
-//     newOption.text = option.name;
-//     batchTrack.appendChild(newOption);
-//     }
-//     };
-//     displayOption();ZAX
-
- async function populateCountrySelect() {
-    const countri = await getcountri();
-    const countrySelect = document.getElementById('countrySelect');
-    conry
-    // for (const country in countri) {
-    //     const option = document.createElement('option');
-    //     option.value = countri[country];
-    //     option.textContent = countri;
-    //     countrySelect.appendChild(option);
-    //     console.log(countri)
-    // }
-
-}
-populateCountrySelect();
-
-
-function fetchUniversities() {
-    const country = document.getElementById('countrySelect').value;
-    const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.innerHTML = ''; // Clear previous results
-    universities = []; // Clear previous data
-
-    if (country) {
-        const loadingMessage = document.createElement('p');
-        loadingMessage.textContent = 'Loading universities...';
-        resultsContainer.appendChild(loadingMessage);
-
-        fetch(`http://universities.hipolabs.com/search?country=${country}`)
-            .then(response => {
-                loadingMessage.remove(); // Remove loading message on response
-                return response.json();
-            })
-            .then(data => {
-                universities = data;
-                filteredUniversities = universities;
-                currentPage = 1;
-                displayUniversities();
-                setupPagination();
-            })
-            .catch(error => {
-                console.error('Error fetching universities:', error);
-                resultsContainer.innerHTML = '<p>There was an error retrieving the data. Please try again later.</p>';
-            });
-    } else {
-        alert('Please select a country.');
-    }
-}
-
-function displayUniversities() {
-    const resultsContainer = document.getElementById('resultsContainer');
-    resultsContainer.innerHTML = '';
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentUniversities = filteredUniversities.slice(startIndex, endIndex);
-
-    if (currentUniversities.length > 0) {
-        currentUniversities.forEach(university => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="file:///home/uki/Desktop/uni/img/University-of-the-Philippines-Logo.png" alt="University Logo">
-                <h3>${university.name}</h3>
-                <p>${university.country}</p>
-                <button onclick="window.open('${university.web_pages[0]}', '_blank')">Visit Website</button>
-            `;
-            resultsContainer.appendChild(card);
-        });
-    } else {
-        resultsContainer.innerHTML = '<p>No universities found for the selected country.</p>';
-    }
-}
-
-function setupPagination() {
-    const paginationContainer = document.getElementById('pagination');
-    paginationContainer.innerHTML = '';
-
-    const totalPages = Math.ceil(filteredUniversities.length / itemsPerPage);
-
-    const createButton = (text, page) => {
-        const button = document.createElement('button');
-        button.textContent = text;
-        button.disabled = page === currentPage;
-        button.addEventListener('click', () => {
-            currentPage = page;
-            displayUniversities();
-        });
-        paginationContainer.appendChild(button);
-    };
-
-    createButton('<', currentPage > 1 ? currentPage - 1 : 1);
-
-    for (let i = 1; i <= totalPages; i++) {
-        createButton(i, i);
-    }
-
-    createButton('>', currentPage < totalPages ? currentPage + 1 : totalPages);
-}
-
-function filterUniversities() {
-    const filterText = document.getElementById('filterInput').value.toLowerCase();
-    filteredUniversities = universities.filter(university =>
-        university.name.toLowerCase().includes(filterText)
+    currentPage = 1; 
+    await fetchUniversities(country);
+  });
+  
+ 
+  function showUniversityFilter() {
+    const universityFilter = document.getElementById('universityFilter');
+    universityFilter.style.display = 'block'; 
+  }
+  
+ 
+  document.getElementById('universitySearch').addEventListener('input', function() {
+    const searchQuery = this.value.toLowerCase();
+    
+ 
+    filteredUniversities = universitiesData.filter(university => 
+      university.name.toLowerCase().includes(searchQuery) 
     );
-    currentPage = 1;
-    displayUniversities();
-    setupPagination();
-}
-
-// Populate country options on DOM load
-document.addEventListener('DOMContentLoaded', populateCountrySelect);
+    
+    currentPage = 1; 
+    displayUniversities(filteredUniversities, currentPage);
+  });
+  
+  async function fetchUniversities(country) {
+    const resultsContainer = document.getElementById('results');
+    const loader = document.getElementById('loader');
+    
+    resultsContainer.innerHTML = ''; 
+    loader.style.display = 'block'; 
+    
+    try {
+      const response = await fetch(`http://universities.hipolabs.com/search?country=${country}`);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      universitiesData = await response.json();
+      filteredUniversities = universitiesData;
+      if (universitiesData.length === 0) {
+        resultsContainer.innerHTML = `<p>No universities found for ${country}.</p>`;
+      } else {
+        displayUniversities(universitiesData, currentPage);
+        showUniversityFilter(); 
+      }
+    } catch (error) {
+      resultsContainer.innerHTML = `<p>Error fetching data: ${error.message}</p>`;
+    } finally {
+      loader.style.display = 'none'; 
+    }
+  }
+  
+ 
+  function displayUniversities(universities, page) {
+    const resultsContainer = document.getElementById('results');
+    resultsContainer.innerHTML = ''; 
+  
+    const start = (page - 1) * universitiesPerPage;
+    const end = start + universitiesPerPage;
+    const paginatedUniversities = universities.slice(start, end);
+  
+    paginatedUniversities.forEach(university => {
+      const logoUrl = `https://logo.clearbit.com/${new URL(university.web_pages[0]).hostname}`;
+      const defaultLogoUrl = 'University-of-the-Philippines-Logo.png'; 
+  
+      const universityElement = document.createElement('div');
+      universityElement.classList.add('card');
+      universityElement.innerHTML = `
+        <img src="${logoUrl}" alt="${university.name} Logo" class="university-logo" onerror="this.onerror=null;this.src='${defaultLogoUrl}';">
+        <h3>${university.name}</h3>
+        <p>${university.country}</p>
+        <a href="${university.web_pages[0]}" target="_blank">Visit Website</a>
+      `;
+      resultsContainer.appendChild(universityElement);
+    });
+  
+ 
+    const totalPages = Math.ceil(universities.length / universitiesPerPage);
+  
+  
+    const paginationContainer = document.createElement('div');
+    paginationContainer.classList.add('pagination');
+  
+   
+    const prevButton = document.createElement('button');
+    prevButton.textContent = '<';
+    prevButton.disabled = page === 1; 
+    prevButton.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        displayUniversities(universities, currentPage);
+      }
+    });
+    paginationContainer.appendChild(prevButton);
+  
+ 
+    if (totalPages > 1) {
+      for (let i = 1; i <= totalPages; i++) {
+        const pageNumberButton = document.createElement('button');
+        pageNumberButton.textContent = i;
+        if (i === page) {
+          pageNumberButton.classList.add('active'); 
+        }
+        pageNumberButton.addEventListener('click', () => {
+          currentPage = i;
+          displayUniversities(universities, currentPage);
+        });
+        paginationContainer.appendChild(pageNumberButton);
+      }
+    }
+  
+  
+    const nextButton = document.createElement('button');
+    nextButton.textContent = '>';
+    nextButton.disabled = page === totalPages; 
+    nextButton.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        displayUniversities(universities, currentPage);
+      }
+    });
+    paginationContainer.appendChild(nextButton);
+  
+    resultsContainer.appendChild(paginationContainer);
+  }
+  
+  async function fetchCountries() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'block'; 
+    
+    try {
+      const countries = await fetch('https://restcountries.com/v3.1/all')
+        .then(response => response.json())
+        .then(data => data.map(country => country.name.common))
+        .catch(error => console.error('Error fetching countries:', error));
+  
+      const countryDropdown = document.getElementById('countryDropdown');
+      countries.sort().forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countryDropdown.appendChild(option);
+      });
+    } catch (error) {
+      console.error('Error fetching countries:', error);
+    } finally {
+      loader.style.display = 'none'; 
+    }
+  }
+  
+  const  abcd = math.floor(math.rondom()* 6 + 1);

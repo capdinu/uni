@@ -1,121 +1,206 @@
 body {
-    font-family: Arial, sans-serif;
-    background-image: url('./img/dallas-hall-historic-building-on-260nw-2455819229.webp'); /* Replace with your own background image */
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh;
-    margin: 0;
-    padding: 20px;
-    box-sizing: border-box;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #b9efbc;
+  background-image: url('./img/dallas-hall-historic-building-on-260nw-2455819229.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+ 
+  position: relative;
+  z-index: 1;
+  height: 100%;
 }
 
-.container {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-    max-width: 1200px;
-    width: 100%;
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('./img/dallas-hall-historic-building-on-260nw-2455819229.webp');
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.5; 
+  z-index: -1;  
 }
 
-h1 {
-    margin-bottom: 20px;
-    font-size: 2rem;
+
+
+h1, h3 {
+  text-align: center;
+  color: #120404;
+  font-size: 45px;
+
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
+.search-div{
+  margin: auto;
+  width: 565px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  align-items: center;
+  margin-top: 20px;
+  text-align: center;
+
+}
+@media  (max-width:767px) {
+  .search-div{
+      display: block;
+  }
+  button {
+      width: 100px;
+      height: auto;
+  }
 }
 
-select, input[type="text"] {
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    flex: 1;
-    max-width: 200px;
+input, select, button {
+  padding: 10px;
+  margin: 10px;
+  font-size: 16px;
+  width: 80%;
+  max-width: 400px;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    font-size: 1rem;
+  background-color: #0a6218;
+  color: white;
+  border: none;
+  cursor: pointer;
+  width: 150px;
+  height: 45px;
+  border-radius: 10px;
 }
 
 button:hover {
-    background-color: #45a049;
+  background-color: #436d54;
 }
 
-.results {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-bottom: 20px;
+.results-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .card {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    text-align: center;
-    width: 250px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  margin: 15px;
+  padding: 20px;
+  text-align: center;
+  flex-direction: column;  
+  justify-content: space-between;
+  transition: transform 0.2s;
 }
 
-.card img {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
-    margin-bottom: 10px;
+.card:hover {
+  transform: translateY(-5px);
 }
 
-.card button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: auto;
+.card h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
 }
 
-.card button:hover {
-    background-color: #45a049;
+.card p {
+  font-size: 16px;
+  color: #777;
+}
+
+.card a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  align-self: center; 
+}
+
+.card a:hover {
+  background-color: #218838;
+}
+
+
+.loader {
+  border: 12px solid #f3f3f3;
+  border-top: 12px solid #064d13;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+.university-logo {
+  max-width: 100px;
+  height: 100px;
+  border-radius: 100%;
+  object-fit: cover;
+  margin-bottom: 15px;
+  border-radius: 10px;
+}
+
+
+
+#universitySearch{
+  border-radius: 10px;
+
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 5px;
+  left: 0;               
+  right: 0;               
+  text-align: center;    
+  display: flex;         
+  justify-content: center;
+ 
+  padding: 10px 0;        
+  margin-top: 10px;
+  position: absolute;   
+  bottom: 0;
+  margin-bottom: -45px;
 }
 
 .pagination button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
+  margin: 5px;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  background-color: #edeff2;
+  color: #120404;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background-color: #0056b3;
+  font-weight: bold;
+  color: #ffff;
 }
 
 .pagination button:hover {
-    background-color: #45a049;
+  background-color: #0056b3;
 }
 
-.pagination button:disabled {
-    background-color: lightgray;
-    cursor: not-allowed;
-}
